@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import providerSlice from "./providerSlice";
-import tokenSlice from "./tokenSlice";
-import exchangeSlice from "./exchangeSlice";
+import provider from "./providerSlice";
+import tokens from "./tokenSlice";
+import exchange from "./exchangeSlice";
 
 export default configureStore({
     reducer: {
-        providerSlice,
-        tokenSlice,
-        exchangeSlice
+        provider,
+        tokens,
+        exchange
     }
 });
