@@ -5,26 +5,30 @@ import config from '../config.json';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadToken } from '../redux/tokenSlice';
 import { loadExchange } from '../redux/exchangeSlice';
-import { 
-    loadConnection, 
-    loadNetwork, 
+import {
+    setConnection,
+    setChainId,
+    loadNetwork,
     loadAccount
 } from '../redux/providerSlice';
 
 export default function App() {
 
     const dispatch = useDispatch();
-    
+
     const loadChainData = async () => {
         try {
             if (window.ethereum) {
-                const provider = dispatch(loadConnection());
-                const chainId = await dispatch(loadNetwork(provider));
-                await dispatch(loadAccount());
-                await dispatch(loadToken(config[chainId].NXP.address, provider));
-                await dispatch(loadExchange(config[chainId].exchange.address, provider));
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const { chainId } = await provider.getNetwork();
+                dispatch(setConnection(provider.connection));
+                dispatch(setChainId(chainId));
+
+                dispatch(loadAccount(provider));
+                dispatch(loadToken(config[chainId].NXP.address, provider));
+                dispatch(loadExchange(config[chainId].exchange.address, provider));
             } else {
-                console.log('no metamask detected...');
+                console.log('No MetaMask detected...');
             }
         } catch (err) {
             console.log(err);

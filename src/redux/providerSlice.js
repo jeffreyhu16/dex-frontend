@@ -8,41 +8,31 @@ export const providerSlice = createSlice({
         setConnection: (state, action) => {
             state.connection = action.payload;
         },
-        setNetwork: (state, action) => {
-            state.network = action.payload;
+        setChainId: (state, action) => {
+            state.chainId = action.payload;
         },
-        setAccount: (state, action) => {
-            state.account = action.payload;
+        setAccount: {
+            reducer: (state, action) => {
+                const { account, balance } = action.payload;
+                state.account = account;
+                state.balance = balance;
+            },
+            prepare: (account, balance) => ({
+                payload: { account, balance }
+            })
         }
     }
 });
 
-export const loadConnection = () => {
-    return dispatch => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        dispatch(setConnection(provider.connection));
-        return provider;
-    }
-}
-
-export const loadNetwork = (provider) => {
-    return async dispatch => {
-        const { chainId } = await provider.getNetwork();
-        dispatch(setNetwork(chainId));
-        console.log('load network in redux...')
-        return chainId;
-    }
-}
-
-export const loadAccount = () => {
+export const loadAccount = provider => {
     return async dispatch => {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const account = ethers.utils.getAddress(accounts[0]);
-        dispatch(setAccount(account));
-        return account;
+        const balance = ethers.utils.formatEther(await provider.getBalance(account));
+        dispatch(setAccount(account, balance));
     }
 }
 
-export const { setConnection, setNetwork, setAccount } = providerSlice.actions;
+export const { setConnection, setChainId, setAccount } = providerSlice.actions;
 
 export default providerSlice.reducer;
