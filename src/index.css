@@ -129,8 +129,9 @@ small {
 	position: relative;
 }
 
-.exchange__header small {
-	margin: 0 0.50em 0 0;
+.exchange__header span {
+	display: inline-block;
+    margin: 0 0.4em 0 0.8em;
 }
 
 .exchange__header select,
@@ -205,7 +206,7 @@ small {
 	margin: 0;
 	border-radius: 10px;
 
-	width: 182px;
+	width: 11rem;
 	height: 48px;
 
 	font-size: 16px;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import logo from '../assets/logo.png'
-import Blockies from 'react-blockies';
+import metamask from '../assets/metamask.svg';
 
 export default function Navbar() {
 
@@ -28,12 +28,13 @@ export default function Navbar() {
             <div className='exchange__header--account flex'>
                 <p>
                     <small>Balance</small>
-                    {roundedBalance}
+                    <span>{roundedBalance}</span>
+                    <small>ETH</small>
                 </p>
                 <a href=''>
                     {truncatedAcc}
-                    <Blockies seed={provider.account ? provider.account : ''} className='identicon' />
-                    </a>
+                    <img src={metamask} alt='' />
+                </a>
             </div>
         </div>
     )
