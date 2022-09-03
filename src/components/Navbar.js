@@ -27,7 +27,7 @@ export default function Navbar() {
 
     const renderSelect = value => {
         return (
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ display: "flex" }}>
                 <img src={eth} alt='' className='icon-eth' />
                 <span>{value}</span>
             </Box>
@@ -50,7 +50,7 @@ export default function Navbar() {
                 <h1>NEXchange</h1>
             </div>
             <div className='exchange__header--networks flex'>
-                <FormControl fullWidth>
+                <FormControl>
                     <InputLabel>Network</InputLabel>
                     <Select
                         label='Network'
@@ -58,8 +58,14 @@ export default function Navbar() {
                         renderValue={value => renderSelect(value)}
                         onChange={selectHandler}
                     >
-                        <MenuItem value='rinkeby'>Rinkeby</MenuItem>
-                        <MenuItem value='localhost'>LocalHost</MenuItem>
+                        <MenuItem value='rinkeby'>
+                            <img src={eth} alt='' className='icon-eth' />
+                            <span>Rinkeby</span>
+                        </MenuItem>
+                        <MenuItem value='localhost'>
+                            <img src={eth} alt='' className='icon-eth' />
+                            <span>LocalHost</span>
+                        </MenuItem>
                     </Select>
                 </FormControl>
             </div>

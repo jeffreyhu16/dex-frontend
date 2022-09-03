@@ -10,11 +10,17 @@ export const DARK_THEME = {
         MuiSelect: {
             styleOverrides: {
                 root: {
+                    width: '10rem',
                     color: '#f1f2f9',
                     borderRadius: '10px',
                     backgroundColor: '#222d41',
                     '.MuiOutlinedInput-input': {
-                        // padding: '0'
+                        textTransform: 'capitalize',
+                        padding: '12.5px 14px',
+                        '.MuiBox-root': {
+                            gap: '16px',
+                            alignItems: 'center'
+                        }
                     },
                     '.MuiOutlinedInput-notchedOutline': {
                         borderStyle: 'none',
@@ -24,7 +30,19 @@ export const DARK_THEME = {
                     }
                 }
             },
-
+        },
+        MuiMenu: {
+            styleOverrides: {
+                root: {
+                    '.MuiPopover-paper': {
+                        borderRadius: '10px',
+                        '.MuiMenuItem-root': {
+                            padding: '6px 14px',
+                            gap: '16px'
+                        }
+                    }
+                }
+            }
         }
     }
 }
