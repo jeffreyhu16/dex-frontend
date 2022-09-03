@@ -2,6 +2,8 @@ import { ethers } from 'ethers';
 import React from 'react';
 import Navbar from './Navbar';
 import config from '../config.json';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { DARK_THEME } from '../mui/dark.theme';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadToken } from '../redux/tokenSlice';
 import { loadExchange } from '../redux/exchangeSlice';
@@ -24,7 +26,6 @@ export default function App() {
                 dispatch(setConnection(provider.connection));
                 dispatch(setChainId(chainId));
 
-                dispatch(loadAccount(provider));
                 dispatch(loadToken(config[chainId].NXP.address, provider));
                 dispatch(loadExchange(config[chainId].exchange.address, provider));
             } else {
@@ -39,36 +40,27 @@ export default function App() {
         loadChainData();
     }, []);
 
+    const darkTheme = createTheme(DARK_THEME);
+
     return (
-        <div>
-
-            <Navbar />
-
-            <main className='exchange grid'>
-                <section className='exchange__section--left grid'>
-
-                    {/* Markets */}
-
-                    {/* Balance */}
-
-                    {/* Order */}
-
-                </section>
-                <section className='exchange__section--right grid'>
-
-                    {/* PriceChart */}
-
-                    {/* Transactions */}
-
-                    {/* Trades */}
-
-                    {/* OrderBook */}
-
-                </section>
-            </main>
-
-            {/* Alert */}
-
-        </div>
+        <ThemeProvider theme={darkTheme}>
+            <div>
+                <Navbar />
+                <main className='exchange grid'>
+                    <section className='exchange__section--left grid'>
+                        {/* Markets */}
+                        {/* Balance */}
+                        {/* Order */}
+                    </section>
+                    <section className='exchange__section--right grid'>
+                        {/* PriceChart */}
+                        {/* Transactions */}
+                        {/* Trades */}
+                        {/* OrderBook */}
+                    </section>
+                </main>
+                {/* Alert */}
+            </div>
+        </ThemeProvider>
     );
 }

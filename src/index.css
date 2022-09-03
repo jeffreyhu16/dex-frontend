@@ -129,11 +129,6 @@ small {
 	position: relative;
 }
 
-.exchange__header span {
-	display: inline-block;
-    margin: 0 0.4em 0 0.8em;
-}
-
 .exchange__header select,
 .exchange__chart select {
 	background: transparent;
@@ -180,9 +175,6 @@ small {
 	right: 24px;
 	transform: translate(0, -50%);
 
-	width: 400px;
-	height: 48px;
-
 	border-radius: 10px;
 
 	grid-column-start: 9;
@@ -190,7 +182,12 @@ small {
 }
 
 .exchange__header--account p {
-	margin: 0 auto;
+    margin: 0 1.5em;
+}
+
+.exchange__header--account span {
+	display: inline-block;
+    margin: 0 0.8em;
 }
 
 .exchange__header--account a,
@@ -212,7 +209,7 @@ small {
 	font-size: 16px;
 	text-decoration: none;
 
-	transition: all 250ms ease;
+	transition: all 150ms ease;
 }
 
 .exchange__header--account button:hover {
@@ -365,6 +362,10 @@ small {
 
 /* ------------------------------------------------------ */
 /* Images */
+
+.icon-eth {
+    
+}
 
 .logo {
 	width: 35px;
