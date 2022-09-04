@@ -16,28 +16,40 @@ import {
 
 export default function App() {
 
+    let provider;
     const dispatch = useDispatch();
 
     const loadChainData = async () => {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        const { chainId } = await provider.getNetwork();
+        dispatch(setConnection(provider.connection));
+        dispatch(setChainId(chainId));
+        console.log(provider['_network'])
+        const { NXP, mETH, mDAI, exchange } = config[chainId];
+        dispatch(loadToken(NXP.address, provider));
+        dispatch(loadToken(mETH.address, provider));
+        dispatch(loadExchange(exchange.address, provider));
+    }
+
+    React.useEffect(() => {
         try {
             if (window.ethereum) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const { chainId } = await provider.getNetwork();
-                dispatch(setConnection(provider.connection));
-                dispatch(setChainId(chainId));
+                loadChainData();
 
-                dispatch(loadToken(config[chainId].NXP.address, provider));
-                dispatch(loadExchange(config[chainId].exchange.address, provider));
+                window.ethereum.on('chainChanged', () => {
+                    loadChainData();
+                    console.log('network changed...');    
+                });
+        
+                window.ethereum.on('accountsChanged', () => {
+                    dispatch(loadAccount(provider));
+                });
             } else {
                 console.log('No MetaMask detected...');
             }
         } catch (err) {
             console.log(err);
         }
-    }
-
-    React.useEffect(() => {
-        loadChainData();
     }, []);
 
     const darkTheme = createTheme(DARK_THEME);

@@ -1,9 +1,10 @@
 import React from 'react';
 import { ethers } from 'ethers';
+import config from '../config.json';
 import logo from '../assets/logo.png';
 import eth from '../assets/eth.svg';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadAccount } from '../redux/providerSlice';
+import { loadAccount, setChainId } from '../redux/providerSlice';
 import metamask from '../assets/metamask.svg';
 import Box from '@mui/material/Box';
 import Select from '@mui/material/Select';
@@ -17,6 +18,12 @@ export default function Navbar() {
     const provider = useSelector(state => state.provider);
 
     const [network, setNetwork] = React.useState('');
+    const chainId = useSelector(state => state.provider.chainId);
+
+    if (chainId) {
+        // console.log(config[chainId])
+        console.log(`0x${chainId.toString(16)}`)
+    }
 
     let truncatedAcc, roundedBalance;
     if (provider.account) {
@@ -26,16 +33,31 @@ export default function Navbar() {
     }
 
     const renderSelect = value => {
+        let networkName;
+        switch (value) {
+            case '0x5':
+                networkName = 'Goerli';
+                break;
+            case '0x7a69':
+                networkName = 'Localhost'
+                break;
+        }
         return (
             <Box sx={{ display: "flex" }}>
                 <img src={eth} alt='' className='icon-eth' />
-                <span>{value}</span>
+                <span>{networkName}</span>
             </Box>
         )
     }
 
-    const selectHandler = event => {
-        setNetwork(event.target.value);
+    const selectHandler = async event => {
+        const chainId = event.target.value;
+
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId }]
+        });
+        // console.log(event.target.value);
     }
 
     const connectHandler = () => {
@@ -54,15 +76,15 @@ export default function Navbar() {
                     <InputLabel>Network</InputLabel>
                     <Select
                         label='Network'
-                        value={network}
+                        value={config[chainId] ? `0x${chainId.toString(16)}` : ''}
                         renderValue={value => renderSelect(value)}
                         onChange={selectHandler}
                     >
-                        <MenuItem value='rinkeby'>
+                        <MenuItem value='0x5'>
                             <img src={eth} alt='' className='icon-eth' />
-                            <span>Rinkeby</span>
+                            <span>Goerli</span>
                         </MenuItem>
-                        <MenuItem value='localhost'>
+                        <MenuItem value='0x7a69'>
                             <img src={eth} alt='' className='icon-eth' />
                             <span>LocalHost</span>
                         </MenuItem>

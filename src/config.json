@@ -1,4 +1,18 @@
 {
+    "5": {
+        "NXP": {
+            "address": "0xF9b405477809d358524C2E67bdb0338dA6F4b71B"
+        },
+        "mETH": {
+            "address": "0x5478bf6dC3aDFde1e552f489B1E54346C357FB3b"
+        },
+        "mDAI": {
+            "address": "0x0FD194aDa5aa97139291AfBF40E4774945BB9AaE"
+        },
+        "exchange": {
+            "address": "0x1f494c3518276da5497cE4b56102337d7575181a"
+        }
+    },
     "31337": {
         "NXP": {
             "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
