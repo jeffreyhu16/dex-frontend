@@ -10,21 +10,22 @@ import { loadExchange } from '../redux/exchangeSlice';
 import {
     setConnection,
     setChainId,
-    loadNetwork,
     loadAccount
 } from '../redux/providerSlice';
 
 export default function App() {
 
-    let provider;
     const dispatch = useDispatch();
 
+    const { account, chainId } = useSelector(state => state.provider);
+
     const loadChainData = async () => {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         const { chainId } = await provider.getNetwork();
+
         dispatch(setConnection(provider.connection));
         dispatch(setChainId(chainId));
-        console.log(provider['_network'])
+
         const { NXP, mETH, mDAI, exchange } = config[chainId];
         dispatch(loadToken(NXP.address, provider));
         dispatch(loadToken(mETH.address, provider));
@@ -38,11 +39,10 @@ export default function App() {
 
                 window.ethereum.on('chainChanged', () => {
                     loadChainData();
-                    console.log('network changed...');    
                 });
-        
+
                 window.ethereum.on('accountsChanged', () => {
-                    dispatch(loadAccount(provider));
+                    dispatch(loadAccount());
                 });
             } else {
                 console.log('No MetaMask detected...');
@@ -51,6 +51,12 @@ export default function App() {
             console.log(err);
         }
     }, []);
+
+    React.useEffect(() => {
+        if (account) {
+            dispatch(loadAccount());
+        }
+    }, [chainId]);
 
     const darkTheme = createTheme(DARK_THEME);
 

@@ -15,21 +15,16 @@ import FormControl from '@mui/material/FormControl';
 export default function Navbar() {
 
     const dispatch = useDispatch();
+
     const provider = useSelector(state => state.provider);
-
-    const [network, setNetwork] = React.useState('');
     const chainId = useSelector(state => state.provider.chainId);
-
-    if (chainId) {
-        // console.log(config[chainId])
-        console.log(`0x${chainId.toString(16)}`)
-    }
 
     let truncatedAcc, roundedBalance;
     if (provider.account) {
         const { account, balance } = provider;
         truncatedAcc = account.slice(0, 5) + '...' + account.slice(account.length - 4);
         roundedBalance = Number(balance).toFixed(4);
+        // console.log(balance)
     }
 
     const renderSelect = value => {
@@ -61,8 +56,7 @@ export default function Navbar() {
     }
 
     const connectHandler = () => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        dispatch(loadAccount(provider));
+        dispatch(loadAccount());
     }
 
     return (
