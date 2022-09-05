@@ -34,7 +34,7 @@ export default function App() {
 
     React.useEffect(() => {
         try {
-            if (window.ethereum) {
+            if (window.ethereum) { // check for unavailable chains
                 loadChainData();
 
                 window.ethereum.on('chainChanged', () => {
