@@ -24,7 +24,7 @@ export default function Navbar() {
         const { account, balance } = provider;
         truncatedAcc = account.slice(0, 5) + '...' + account.slice(account.length - 4);
         roundedBalance = Number(balance).toFixed(4);
-        // console.log(balance)
+        console.log(`${config[chainId].etherscan}/${provider.account}`)
     }
 
     const renderSelect = value => {
@@ -93,7 +93,10 @@ export default function Navbar() {
                 </p>
                 {
                     provider.account ?
-                        <a href='#'>
+                        <a
+                            href={config[chainId] ? `${config[chainId].etherscan}/${provider.account}`: '#'}
+                            target='_blank'
+                        >
                             {truncatedAcc}
                             <img src={metamask} alt='' />
                         </a>

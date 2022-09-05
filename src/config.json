@@ -11,7 +11,8 @@
         },
         "exchange": {
             "address": "0x1f494c3518276da5497cE4b56102337d7575181a"
-        }
+        },
+        "etherscan": "https://goerli.etherscan.io/address"
     },
     "31337": {
         "NXP": {
@@ -25,6 +26,7 @@
         },
         "exchange": {
             "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
-        }
+        },
+        "etherscan": "#"
     }
 }
