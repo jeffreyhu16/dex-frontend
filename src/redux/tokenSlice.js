@@ -1,48 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
-import TOKEN_ABI from '../abi/Token.json';
-import { ethers } from "ethers";
 
 export const tokenSlice = createSlice({
     name: 'token',
     initialState: {
-        NXP: {
-            loaded: false,
-        },
-        mETH: {
-            loaded: false,
-        },
-        mDAI: {
-            loaded: false,
-        },
+        symbols: [],
     },
     reducers: {
         setTokens: {
             reducer: (state, action) => {
-                const { symbols } = action.payload;
-                state[symbols[0]].loaded = true;
-                state[symbols[1]].loaded = true;
-                
+                const symbols = action.payload;
+                state.symbols = symbols;
             },
-            prepare: (symbols) => ({
-                payload: { symbols }
-            })
+            // prepare: (symbol_1, symbol_2) => ({
+            //     payload: { symbol_1, symbol_2 }
+            // })
         },
-        clearTokens: (state, action) => {
-            // for (let token of state.token) {
-            //     token.loaded = false;
-            // }
-            console.log(state)
-        }
     }
 });
 
-export const loadTokens = tokens => {
+export const loadTokens = (token_1, token_2) => {
     return async dispatch => {
-        dispatch(clearTokens());
-        const symbol_1 = await tokens[0].symbol();
-        const symbol_2 = await tokens[1].symbol();
+        const symbol_1 = await token_1.symbol();
+        const symbol_2 = await token_2.symbol();
         dispatch(setTokens([symbol_1, symbol_2]));
-        console.log(symbol_1, symbol_2)
     }
 }
 
