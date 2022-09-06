@@ -80,7 +80,7 @@ export default function Navbar() {
                         </MenuItem>
                         <MenuItem value='0x7a69'>
                             <img src={eth} alt='' className='icon-eth' />
-                            <span>LocalHost</span>
+                            <span>Localhost</span>
                         </MenuItem>
                     </Select>
                 </FormControl>

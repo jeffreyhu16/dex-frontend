@@ -10,11 +10,13 @@ export const DARK_THEME = {
         MuiSelect: {
             styleOverrides: {
                 root: {
+                    fontFamily: 'DM Sans',
                     width: '10rem',
                     color: '#f1f2f9',
                     borderRadius: '10px',
                     backgroundColor: '#222d41',
                     '.MuiOutlinedInput-input': {
+                        
                         textTransform: 'capitalize',
                         padding: '12.5px 14px',
                         '.MuiBox-root': {
@@ -37,6 +39,7 @@ export const DARK_THEME = {
                     '.MuiPopover-paper': {
                         borderRadius: '10px',
                         '.MuiMenuItem-root': {
+                            fontFamily: 'DM Sans',
                             padding: '6px 14px',
                             gap: '16px'
                         }
