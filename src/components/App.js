@@ -1,17 +1,14 @@
 import { ethers } from 'ethers';
 import React from 'react';
 import Navbar from './Navbar';
+import Markets from './Markets';
 import config from '../config.json';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { DARK_THEME } from '../mui/dark.theme';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadToken } from '../redux/tokenSlice';
 import { loadExchange } from '../redux/exchangeSlice';
-import {
-    setConnection,
-    setChainId,
-    loadAccount
-} from '../redux/providerSlice';
+import { setConnection, setChainId, loadAccount } from '../redux/providerSlice';
 
 export default function App() {
 
@@ -27,8 +24,8 @@ export default function App() {
         dispatch(setChainId(chainId));
 
         const { NXP, mETH, mDAI, exchange } = config[chainId];
-        dispatch(loadToken(NXP.address, provider));
-        dispatch(loadToken(mETH.address, provider));
+        // dispatch(loadToken(NXP.address, provider));
+        // dispatch(loadToken(mETH.address, provider));
         dispatch(loadExchange(exchange.address, provider));
     }
 
@@ -66,7 +63,7 @@ export default function App() {
                 <Navbar />
                 <main className='exchange grid'>
                     <section className='exchange__section--left grid'>
-                        {/* Markets */}
+                        <Markets />
                         {/* Balance */}
                         {/* Order */}
                     </section>

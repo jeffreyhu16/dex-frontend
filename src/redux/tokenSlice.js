@@ -16,29 +16,36 @@ export const tokenSlice = createSlice({
         },
     },
     reducers: {
-        setToken: {
+        setTokens: {
             reducer: (state, action) => {
-                const { functions, symbol } = action.payload;
-                state[symbol].loaded = true;
-                // state[symbol].functions = functions;
+                const { symbols } = action.payload;
+                state[symbols[0]].loaded = true;
+                state[symbols[1]].loaded = true;
+                
             },
-            prepare: (functions, symbol) => ({
-                payload: { functions, symbol }
+            prepare: (symbols) => ({
+                payload: { symbols }
             })
         },
+        clearTokens: (state, action) => {
+            // for (let token of state.token) {
+            //     token.loaded = false;
+            // }
+            console.log(state)
+        }
     }
 });
 
-export const loadToken = (address, provider) => {
+export const loadTokens = tokens => {
     return async dispatch => {
-        const token = new ethers.Contract(address, TOKEN_ABI, provider);
-        const symbol = await token.symbol();
-        dispatch(setToken('', symbol));
-        // console.log(token)
-        return token;
+        dispatch(clearTokens());
+        const symbol_1 = await tokens[0].symbol();
+        const symbol_2 = await tokens[1].symbol();
+        dispatch(setTokens([symbol_1, symbol_2]));
+        console.log(symbol_1, symbol_2)
     }
 }
 
-export const { setToken } = tokenSlice.actions;
+export const { setTokens, clearTokens } = tokenSlice.actions;
 
 export default tokenSlice.reducer;

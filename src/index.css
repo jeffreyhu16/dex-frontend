@@ -260,6 +260,10 @@ small {
 	position: relative;
 }
 
+.markets-select-pair {
+    display: flex;
+}
+
 /* ------------------------------------------------------ */
 /* TRANSFERS COMPONENT */
 
