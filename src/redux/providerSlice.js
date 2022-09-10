@@ -5,9 +5,6 @@ export const providerSlice = createSlice({
     name: 'provider',
     initialState: {},
     reducers: {
-        setConnection: (state, action) => {
-            state.connection = action.payload;
-        },
         setChainId: (state, action) => {
             state.chainId = action.payload;
         },
@@ -34,6 +31,6 @@ export const loadAccount = () => {
     }
 }
 
-export const { setConnection, setChainId, setAccount } = providerSlice.actions;
+export const { setChainId, setAccount } = providerSlice.actions;
 
 export default providerSlice.reducer;
