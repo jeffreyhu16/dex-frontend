@@ -56,7 +56,7 @@ export default function Navbar() {
     }
 
     const connectHandler = () => {
-        dispatch(loadAccount());
+        dispatch(loadAccount()); // disable connect button while loading
     }
 
     return (
