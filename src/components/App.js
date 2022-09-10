@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import React from 'react';
 import Navbar from './Navbar';
 import Markets from './Markets';
+import Balance from './Balance';
 import config from '../config.json';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { DARK_THEME } from '../mui/dark.theme';
@@ -19,14 +20,7 @@ export default function App() {
     const loadChainData = async () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const { chainId } = await provider.getNetwork();
-
-        dispatch(setConnection(provider.connection));
         dispatch(setChainId(chainId));
-
-        const { NXP, mETH, mDAI, exchange } = config[chainId];
-        // dispatch(loadToken(NXP.address, provider));
-        // dispatch(loadToken(mETH.address, provider));
-        dispatch(loadExchange(exchange.address, provider));
     }
 
     React.useEffect(() => {
@@ -64,7 +58,7 @@ export default function App() {
                 <main className='exchange grid'>
                     <section className='exchange__section--left grid'>
                         <Markets />
-                        {/* Balance */}
+                        <Balance />
                         {/* Order */}
                     </section>
                     <section className='exchange__section--right grid'>
