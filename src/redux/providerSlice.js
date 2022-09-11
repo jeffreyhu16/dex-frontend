@@ -21,6 +21,15 @@ export const providerSlice = createSlice({
     }
 });
 
+export const loadChainData = () => {
+    return async dispatch => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const { chainId } = await provider.getNetwork();
+        console.log(chainId)
+        dispatch(setChainId(chainId));
+    }
+}
+
 export const loadAccount = () => {
     return async dispatch => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
