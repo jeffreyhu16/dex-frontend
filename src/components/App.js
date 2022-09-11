@@ -3,13 +3,11 @@ import React from 'react';
 import Navbar from './Navbar';
 import Markets from './Markets';
 import Balance from './Balance';
-import config from '../config.json';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { DARK_THEME } from '../mui/dark.theme';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadToken } from '../redux/tokenSlice';
+import { loadChainData, loadAccount } from '../redux/providerSlice';
 import { loadExchange } from '../redux/exchangeSlice';
-import { setConnection, setChainId, loadAccount } from '../redux/providerSlice';
 
 export default function App() {
 
@@ -17,19 +15,13 @@ export default function App() {
 
     const { account, chainId } = useSelector(state => state.provider);
 
-    const loadChainData = async () => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const { chainId } = await provider.getNetwork();
-        dispatch(setChainId(chainId));
-    }
-
     React.useEffect(() => {
         try {
             if (window.ethereum) { // check for unavailable chains
-                loadChainData();
+                dispatch(loadChainData());
 
                 window.ethereum.on('chainChanged', () => {
-                    loadChainData();
+                    dispatch(loadChainData());
                 });
 
                 window.ethereum.on('accountsChanged', () => {
@@ -44,6 +36,9 @@ export default function App() {
     }, []);
 
     React.useEffect(() => {
+        if (chainId) {
+            dispatch(loadExchange(chainId));
+        }
         if (account) {
             dispatch(loadAccount());
         }
