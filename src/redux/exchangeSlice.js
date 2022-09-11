@@ -10,25 +10,32 @@ export const exchangeSlice = createSlice({
         events: []
     },
     reducers: {
-        initiateDeposit: (state, action) => {
+        initiateTx: (state, action) => {
+            const txType = action.payload;
             state.transaction = {
-                transactionType: 'Deposit',
+                transactionType: txType,
                 isPending: true,
                 isSuccessful: false
             }
         },
-        finalizeDeposit: (state, action) => {
-            const args = action.payload;
-            state.transaction = {
-                transactionType: 'Deposit',
-                isPending: false,
-                isSuccessful: true
-            }
-            state.events = [...state.events, {event: 'Deposit', args }];
+        finalizeTx: {
+            reducer: (state, action) => {
+                const { txType, args } = action.payload;
+                state.transaction = {
+                    transactionType: txType,
+                    isPending: false,
+                    isSuccessful: true
+                }
+                state.events = [...state.events, { event: 'Deposit', args }];
+            },
+            prepare: (txType, args) => ({
+                payload: { txType, args }
+            })
         },
-        failDeposit: (state, action) => {
+        failTx: (state, action) => {
+            const txType = action.payload;
             state.transaction = {
-                transactionType: 'Deposit',
+                transactionType: txType,
                 isPending: false,
                 isSuccessful: false
             }
@@ -47,14 +54,23 @@ export const loadExchange = chainId => {
                 amount: ethers.utils.formatEther(amount),
                 balance: ethers.utils.formatEther(balance)
             }
-            dispatch(finalizeDeposit(args));
+            dispatch(finalizeTx('Deposit', args));
+        });
+        exchange.on('Withdraw', (token, user, amount, balance) => {
+            const args = {
+                token,
+                user,
+                amount: ethers.utils.formatEther(amount),
+                balance: ethers.utils.formatEther(balance)
+            }
+            dispatch(finalizeTx('Withdraw', args));
         });
     }
 }
 
 export const depositToken = (exchange, token, amount) => {
     return async dispatch => {
-        dispatch(initiateDeposit());
+        dispatch(initiateTx('Deposit'));
         try {
             const { parseEther } = ethers.utils;
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -64,12 +80,28 @@ export const depositToken = (exchange, token, amount) => {
             const depositTx = await exchange.connect(signer).depositToken(token.address, parseEther(amount));
             await depositTx.wait();
         } catch (err) {
-            dispatch(failDeposit());
+            dispatch(failTx('Withdraw'));
             console.log(err);
         }
     }
 }
 
-export const { initiateDeposit, finalizeDeposit, failDeposit } = exchangeSlice.actions;
+export const withdrawToken = (exchange, token, amount) => {
+    return async dispatch => {
+        dispatch(initiateTx('Withdraw'));
+        try {
+            const { parseEther } = ethers.utils;
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const withdrawTx = await exchange.connect(signer).withdrawToken(token.address, parseEther(amount));
+            await withdrawTx.wait();
+        } catch (err) {
+            dispatch(failTx('Withdraw'));
+            console.log(err);
+        }
+    }
+}
+
+export const { initiateTx, finalizeTx, failTx } = exchangeSlice.actions;
 
 export default exchangeSlice.reducer;

@@ -6,7 +6,7 @@ import TOKEN_ABI from '../abi/Token.json';
 import EXCHANGE_ABI from '../abi/Exchange.json';
 import logo from '../assets/dapp.svg';
 import eth from '../assets/eth.svg';
-import { depositToken } from '../redux/exchangeSlice';
+import { depositToken, withdrawToken } from '../redux/exchangeSlice';
 
 export default function Balance() {
 
@@ -27,7 +27,11 @@ export default function Balance() {
         exchange_2: '0',
     });
 
-    const [deposit, setDeposit] = React.useState({ token_1: '', token_2: '' });
+    const [isDeposit, setIsDeposit] = React.useState(true);
+    const [amount, setAmount] = React.useState({ token_1: '', token_2: '' });
+
+    const depositTab = React.useRef(null);
+    const withdrawTab = React.useRef(null);
 
     React.useEffect(() => {
         if (symbols.length > 1 && account) {
@@ -43,7 +47,7 @@ export default function Balance() {
     React.useEffect(() => {
         if (tokenPair && account) {
             loadBalances();
-            setDeposit({ token_1: '', token_2: '' });
+            setAmount({ token_1: '', token_2: '' });
         }
     }, [tokenPair, events]);
 
@@ -60,16 +64,32 @@ export default function Balance() {
         console.log('balance loading...')
     }
 
+    const tabHandler = e => {
+        if (e.target.className === depositTab.current.className) {
+            withdrawTab.current.className = 'tab';
+            setIsDeposit(true);
+        } else {
+            depositTab.current.className = 'tab';
+            setIsDeposit(false);
+        }
+        e.target.className = 'tab tab--active';
+    }
+
     const changeHandler = (e, token) => {
-        setDeposit(prev => ({
+        setAmount(prev => ({
             ...prev,
             [token]: e.target.value
         }));
     }
 
-    const depositHandler = token => {
-        console.log('deposit submitted...')
-        dispatch(depositToken(exchange, tokenPair[token], deposit[token]));
+    const submitHandler = token => {
+        if (isDeposit) {
+            console.log('deposit submitted...');
+            dispatch(depositToken(exchange, tokenPair[token], amount[token]));
+        } else {
+            console.log('withdraw submitted...');
+            dispatch(withdrawToken(exchange, tokenPair[token], amount[token]));
+        }
     }
 
     return (
@@ -77,8 +97,20 @@ export default function Balance() {
             <div className='component__header flex-between'>
                 <h2>Balance</h2>
                 <div className='tabs'>
-                    <button className='tab tab--active'>Deposit</button>
-                    <button className='tab'>Withdraw</button>
+                    <button
+                        className='tab tab--active'
+                        onClick={tabHandler}
+                        ref={depositTab}
+                    >
+                        Deposit
+                    </button>
+                    <button
+                        className='tab'
+                        onClick={tabHandler}
+                        ref={withdrawTab}
+                    >
+                        Withdraw
+                    </button>
                 </div>
             </div>
 
@@ -110,12 +142,12 @@ export default function Balance() {
                         type="text"
                         id='token_1'
                         placeholder='0.0000'
-                        value={deposit.token_1}
+                        value={amount.token_1}
                         onChange={e => changeHandler(e, 'token_1')}
                     />
 
-                    <button className='button' type='button' onClick={() => depositHandler('token_1')}> 
-                        <span>Deposit</span>
+                    <button className='button' type='button' onClick={() => submitHandler('token_1')}>
+                        <span>{isDeposit ? 'Deposit' : 'Withdraw'}</span>
                     </button>
                 </form>
             </div>
@@ -146,10 +178,16 @@ export default function Balance() {
 
                 <form>
                     <label htmlFor="token_2"></label>
-                    <input type="text" id='token_2' placeholder='0.0000' />
+                    <input
+                        type="text"
+                        id='token_2'
+                        placeholder='0.0000'
+                        value={amount.token_2}
+                        onChange={e => changeHandler(e, 'token_2')}
+                    />
 
-                    <button className='button' type='submit'>
-                        <span>Deposit</span>
+                    <button className='button' type='button' onClick={() => submitHandler('token_2')}>
+                        <span>{isDeposit ? 'Deposit' : 'Withdraw'}</span>
                     </button>
                 </form>
             </div>
