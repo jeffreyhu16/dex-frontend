@@ -23,9 +23,9 @@ export default function Markets() {
         NXP_mDAI = `${NXP.address},${mDAI.address}`;
     }
 
-    const selectHandler = async event => {
-        setPair(event.target.value);
-        const [address_1, address_2] = (event.target.value).split(',');
+    const selectHandler = async e => {
+        setPair(e.target.value);
+        const [address_1, address_2] = (e.target.value).split(',');
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const token_1 = new ethers.Contract(address_1, TOKEN_ABI, provider);
         const token_2 = new ethers.Contract(address_2, TOKEN_ABI, provider);

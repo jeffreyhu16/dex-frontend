@@ -26,10 +26,10 @@ export default function Balance() {
         exchange_2: '0',
     });
 
-    const [deposit, setDeposit] = React.useState({ token_1: '0', token_2: '0' });
+    const [deposit, setDeposit] = React.useState({ token_1: '', token_2: '' });
 
     React.useEffect(() => {
-        if (symbols.length > 1) {
+        if (symbols.length > 1 && account) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const exchange = new ethers.Contract(config[chainId].exchange.address, EXCHANGE_ABI, provider);
             const token_1 = new ethers.Contract(config[chainId][symbols[0]].address, TOKEN_ABI, provider);
@@ -40,8 +40,9 @@ export default function Balance() {
     }, [symbols, account]);
 
     React.useEffect(() => {
-        if (tokenPair) {
-            loadBalances()
+        if (tokenPair && account) {
+            loadBalances();
+            setDeposit({ token_1: '', token_2: '' });
         }
     }, [tokenPair, events]);
 
@@ -104,7 +105,7 @@ export default function Balance() {
 
                 <form>
                     <label htmlFor="token_1"></label>
-                    <input type="text" id='token_1' placeholder='0.0000' onChange={e => changeHandler(e, 'token_1')} />
+                    <input type="text" id='token_1' placeholder='0.0000' value={deposit.token_1} onChange={e => changeHandler(e, 'token_1')} />
 
                     <button className='button' type='button' onClick={() => depositHandler('token_1')}> {/* must call transferFrom function */}
                         <span>Deposit</span>
