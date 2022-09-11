@@ -26,7 +26,7 @@ export const exchangeSlice = createSlice({
                     isPending: false,
                     isSuccessful: true
                 }
-                state.events = [...state.events, { event: 'Deposit', args }];
+                state.events = [...state.events, { event: txType, args }];
             },
             prepare: (txType, args) => ({
                 payload: { txType, args }
@@ -65,6 +65,16 @@ export const loadExchange = chainId => {
             }
             dispatch(finalizeTx('Withdraw', args));
         });
+        exchange.on('OrderMade', (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp, event) => {
+            const args = {
+                user,
+                tokenGet,
+                amountGet: ethers.utils.formatEther(amountGet),
+                tokenGive,
+                amountGive: ethers.utils.formatEther(amountGive)
+            }
+            dispatch(finalizeTx('makeOrder', args));
+        });
     }
 }
 
@@ -97,6 +107,38 @@ export const withdrawToken = (exchange, token, amount) => {
             await withdrawTx.wait();
         } catch (err) {
             dispatch(failTx('Withdraw'));
+            console.log(err);
+        }
+    }
+}
+
+export const makeOrder = (exchange, tokens, amount, price, isBuy) => {
+    return async dispatch => {
+        dispatch(initiateTx('makeOrder'));
+        try {
+            const { parseEther } = ethers.utils;
+            let args;
+            if (isBuy) {
+                args = [
+                    tokens.token_1.address,
+                    parseEther(amount),
+                    tokens.token_2.address,
+                    parseEther((amount * price).toString())
+                ];
+            } else {
+                args = [
+                    tokens.token_2.address,
+                    parseEther((amount* price).toString()), 
+                    tokens.token_1.address, 
+                    parseEther(amount)
+                ];
+            }
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const orderTx = await exchange.connect(signer).makeOrder(...args);
+            await orderTx.wait();
+        } catch (err) {
+            dispatch(failTx('makeOrder'));
             console.log(err);
         }
     }

@@ -8,6 +8,7 @@ import { DARK_THEME } from '../mui/dark.theme';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadChainData, loadAccount } from '../redux/providerSlice';
 import { loadExchange } from '../redux/exchangeSlice';
+import Order from './Order';
 
 export default function App() {
 
@@ -54,7 +55,7 @@ export default function App() {
                     <section className='exchange__section--left grid'>
                         <Markets />
                         <Balance />
-                        {/* Order */}
+                        <Order />
                     </section>
                     <section className='exchange__section--right grid'>
                         {/* PriceChart */}
