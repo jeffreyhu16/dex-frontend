@@ -16,12 +16,11 @@ export const DARK_THEME = {
                     borderRadius: '10px',
                     backgroundColor: '#222d41',
                     '.MuiOutlinedInput-input': {
-                        
                         textTransform: 'capitalize',
                         padding: '12.5px 14px',
                         '.MuiBox-root': {
                             gap: '16px',
-                            alignItems: 'center'
+                            alignItems: 'flex-end'
                         }
                     },
                     '.MuiOutlinedInput-notchedOutline': {
@@ -41,6 +40,7 @@ export const DARK_THEME = {
                         '.MuiMenuItem-root': {
                             fontFamily: 'DM Sans',
                             padding: '6px 14px',
+                            alignItems: 'flex-end',
                             gap: '16px'
                         }
                     }

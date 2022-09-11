@@ -269,7 +269,16 @@ small {
 
 .exchange__transfers img {
 	float: left;
-	margin: 0 0.30em 0 0;
+	margin: 0 0.5em 0 0;
+}
+
+.exchange__transfers small {
+	display: inline-block;
+	margin-bottom: 0.2em;
+}
+
+.exchange-transfers-token {
+	width: 1rem;
 }
 
 .exchange__transfers--form .flex-between {
@@ -367,8 +376,9 @@ small {
 /* ------------------------------------------------------ */
 /* Images */
 
-.icon-eth {
+.icon-network {
     width: 1.5rem;
+	float: left;
 }
 
 .logo {

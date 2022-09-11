@@ -39,7 +39,7 @@ export default function Navbar() {
         }
         return (
             <Box sx={{ display: "flex" }}>
-                <img src={eth} alt='' className='icon-eth' />
+                <img src={eth} alt='' className='icon-network' />
                 <span>{networkName}</span>
             </Box>
         )
@@ -75,11 +75,11 @@ export default function Navbar() {
                         onChange={selectHandler}
                     >
                         <MenuItem value='0x5'>
-                            <img src={eth} alt='' className='icon-eth' />
-                            <span>Goerli</span>
+                            <img src={eth} alt='' className='icon-network' />
+                            <div>Goerli</div>
                         </MenuItem>
                         <MenuItem value='0x7a69'>
-                            <img src={eth} alt='' className='icon-eth' />
+                            <img src={eth} alt='' className='icon-network' />
                             <span>Localhost</span>
                         </MenuItem>
                     </Select>

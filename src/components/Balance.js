@@ -5,6 +5,7 @@ import config from '../config.json';
 import TOKEN_ABI from '../abi/Token.json';
 import EXCHANGE_ABI from '../abi/Exchange.json';
 import logo from '../assets/dapp.svg';
+import eth from '../assets/eth.svg';
 import { depositToken } from '../redux/exchangeSlice';
 
 export default function Balance() {
@@ -85,29 +86,35 @@ export default function Balance() {
 
             <div className='exchange__transfers--form'>
                 <div className='flex-between'>
-                    <p>
+                    <div>
                         <small>Token</small>
                         <br />
-                        <img src={logo} alt='' />
+                        <img src={logo} alt='' className='exchange-transfers-token' />
                         {symbols.length > 1 && symbols[0]}
-                    </p>
-                    <p>
+                    </div>
+                    <div>
                         <small>Wallet</small>
                         <br />
                         {balances.wallet_1}
-                    </p>
-                    <p>
+                    </div>
+                    <div>
                         <small>Exchange</small>
                         <br />
                         {balances.exchange_1}
-                    </p>
+                    </div>
                 </div>
 
                 <form>
                     <label htmlFor="token_1"></label>
-                    <input type="text" id='token_1' placeholder='0.0000' value={deposit.token_1} onChange={e => changeHandler(e, 'token_1')} />
+                    <input
+                        type="text"
+                        id='token_1'
+                        placeholder='0.0000'
+                        value={deposit.token_1}
+                        onChange={e => changeHandler(e, 'token_1')}
+                    />
 
-                    <button className='button' type='button' onClick={() => depositHandler('token_1')}> {/* must call transferFrom function */}
+                    <button className='button' type='button' onClick={() => depositHandler('token_1')}> 
                         <span>Deposit</span>
                     </button>
                 </form>
@@ -119,22 +126,22 @@ export default function Balance() {
 
             <div className='exchange__transfers--form'>
                 <div className='flex-between'>
-                    <p>
+                    <div>
                         <small>Token</small>
                         <br />
-                        <img src={logo} alt='' />
+                        <img src={eth} alt='' className='exchange-transfers-token' />
                         {symbols.length > 1 && symbols[1]}
-                    </p>
-                    <p>
+                    </div>
+                    <div>
                         <small>Wallet</small>
                         <br />
                         {balances.wallet_2}
-                    </p>
-                    <p>
+                    </div>
+                    <div>
                         <small>Exchange</small>
                         <br />
                         {balances.exchange_2}
-                    </p>
+                    </div>
                 </div>
 
                 <form>
