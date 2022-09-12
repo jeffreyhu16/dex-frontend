@@ -3,18 +3,21 @@ import React from 'react';
 import Navbar from './Navbar';
 import Markets from './Markets';
 import Balance from './Balance';
+import Order from './Order';
+import OrderBook from './OrderBook';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { DARK_THEME } from '../mui/dark.theme';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadChainData, loadAccount } from '../redux/providerSlice';
 import { loadExchange } from '../redux/exchangeSlice';
-import Order from './Order';
 
 export default function App() {
 
     const dispatch = useDispatch();
 
     const { account, chainId } = useSelector(state => state.provider);
+
+    const [exchange, setExchange] = React.useState();
 
     React.useEffect(() => {
         try {
@@ -38,7 +41,8 @@ export default function App() {
 
     React.useEffect(() => {
         if (chainId) {
-            dispatch(loadExchange(chainId));
+            const exchange = dispatch(loadExchange(chainId));
+            setExchange(exchange);
         }
         if (account) {
             dispatch(loadAccount());
@@ -54,18 +58,18 @@ export default function App() {
                 <main className='exchange grid'>
                     <section className='exchange__section--left grid'>
                         <Markets />
-                        <Balance />
-                        <Order />
+                        <Balance exchange={exchange} />
+                        <Order exchange={exchange} />
                     </section>
                     <section className='exchange__section--right grid'>
                         {/* PriceChart */}
                         {/* Transactions */}
                         {/* Trades */}
-                        {/* OrderBook */}
+                        <OrderBook exchange={exchange} />
                     </section>
                 </main>
                 {/* Alert */}
             </div>
         </ThemeProvider>
-    );
+    )
 }

@@ -2,11 +2,12 @@ import React from 'react';
 import { ethers } from 'ethers';
 import config from '../config.json';
 import TOKEN_ABI from '../abi/Token.json';
-import EXCHANGE_ABI from '../abi/Exchange.json';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeOrder } from '../redux/exchangeSlice';
 
-export default function Order() {
+export default function Order(props) {
+
+    const { exchange } = props;
 
     const dispatch = useDispatch();
 
@@ -14,7 +15,6 @@ export default function Order() {
     const symbols = useSelector(state => state.tokens.symbols);
     const events = useSelector(state => state.exchange.events);
 
-    const [exchange, setExchange] = React.useState();
     const [tokenPair, setTokenPair] = React.useState();
 
     const [isBuy, setIsBuy] = React.useState(true);
@@ -25,18 +25,19 @@ export default function Order() {
     const sellTab = React.useRef(null);
 
     React.useEffect(() => {
-        if (symbols.length > 1 && account) {
+        if (symbols.length && account) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const exchange = new ethers.Contract(config[chainId].exchange.address, EXCHANGE_ABI, provider);
             const token_1 = new ethers.Contract(config[chainId][symbols[0]].address, TOKEN_ABI, provider);
             const token_2 = new ethers.Contract(config[chainId][symbols[1]].address, TOKEN_ABI, provider);
-            setExchange(exchange);
             setTokenPair({ token_1, token_2 });
         }
     }, [symbols, account]);
 
     React.useEffect(() => {
-        if (events.length > 0) {console.log(events);}
+        if (events.length) {
+            setAmount('');
+            setPrice('');
+        }
     }, [events]);
 
     const tabHandler = e => {
@@ -99,5 +100,5 @@ export default function Order() {
                 </button>
             </form>
         </div>
-    );
+    )
 }

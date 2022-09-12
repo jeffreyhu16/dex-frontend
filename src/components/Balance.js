@@ -8,7 +8,9 @@ import logo from '../assets/dapp.svg';
 import eth from '../assets/eth.svg';
 import { depositToken, withdrawToken } from '../redux/exchangeSlice';
 
-export default function Balance() {
+export default function Balance(props) {
+
+    const { exchange } = props;
 
     const dispatch = useDispatch();
 
@@ -17,9 +19,7 @@ export default function Balance() {
 
     const events = useSelector(state => state.exchange.events);
 
-    const [exchange, setExchange] = React.useState();
     const [tokenPair, setTokenPair] = React.useState();
-
     const [balances, setBalances] = React.useState({
         wallet_1: '0',
         exchange_1: '0',
@@ -34,12 +34,10 @@ export default function Balance() {
     const withdrawTab = React.useRef(null);
 
     React.useEffect(() => {
-        if (symbols.length > 1 && account) {
+        if (symbols.length && account) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const exchange = new ethers.Contract(config[chainId].exchange.address, EXCHANGE_ABI, provider);
             const token_1 = new ethers.Contract(config[chainId][symbols[0]].address, TOKEN_ABI, provider);
             const token_2 = new ethers.Contract(config[chainId][symbols[1]].address, TOKEN_ABI, provider);
-            setExchange(exchange);
             setTokenPair({ token_1, token_2 });
         }
     }, [symbols, account]);
@@ -122,7 +120,7 @@ export default function Balance() {
                         <small>Token</small>
                         <br />
                         <img src={logo} alt='' className='exchange-transfers-token' />
-                        {symbols.length > 1 && symbols[0]}
+                        {symbols.length && symbols[0]}
                     </div>
                     <div>
                         <small>Wallet</small>
@@ -162,7 +160,7 @@ export default function Balance() {
                         <small>Token</small>
                         <br />
                         <img src={eth} alt='' className='exchange-transfers-token' />
-                        {symbols.length > 1 && symbols[1]}
+                        {symbols.length && symbols[1]}
                     </div>
                     <div>
                         <small>Wallet</small>
@@ -194,5 +192,5 @@ export default function Balance() {
 
             <hr />
         </div>
-    );
+    )
 }
