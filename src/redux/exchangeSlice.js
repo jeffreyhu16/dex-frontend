@@ -7,13 +7,17 @@ export const exchangeSlice = createSlice({
     name: 'exchange',
     initialState: {
         transaction: {},
+        orders: [],
         events: []
     },
     reducers: {
+        setOrders: (state, action) => {
+            state.orders = action.payload;
+        },
         initiateTx: (state, action) => {
             const txType = action.payload;
             state.transaction = {
-                transactionType: txType,
+                type: txType,
                 isPending: true,
                 isSuccessful: false
             }
@@ -21,12 +25,17 @@ export const exchangeSlice = createSlice({
         finalizeTx: {
             reducer: (state, action) => {
                 const { txType, args } = action.payload;
+                switch (txType) {
+                    case 'makeOrder':
+                        state.orders = [...state.orders, args];
+                        break;
+                }
                 state.transaction = {
-                    transactionType: txType,
+                    type: txType,
                     isPending: false,
                     isSuccessful: true
                 }
-                state.events = [...state.events, { event: txType, args }];
+                state.events = [...state.events, { type: txType, args }];
             },
             prepare: (txType, args) => ({
                 payload: { txType, args }
@@ -35,7 +44,7 @@ export const exchangeSlice = createSlice({
         failTx: (state, action) => {
             const txType = action.payload;
             state.transaction = {
-                transactionType: txType,
+                type: txType,
                 isPending: false,
                 isSuccessful: false
             }
@@ -47,7 +56,7 @@ export const loadExchange = chainId => {
     return dispatch => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const exchange = new ethers.Contract(config[chainId].exchange.address, EXCHANGE_ABI, provider);
-        exchange.on('Deposit', (token, user, amount, balance) => {
+        exchange.on('Deposit', (token, user, amount, balance) => { // ensure no duplicate events
             const args = {
                 token,
                 user,
@@ -67,14 +76,38 @@ export const loadExchange = chainId => {
         });
         exchange.on('OrderMade', (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp, event) => {
             const args = {
+                id: id.toNumber(),
                 user,
                 tokenGet,
                 amountGet: ethers.utils.formatEther(amountGet),
                 tokenGive,
-                amountGive: ethers.utils.formatEther(amountGive)
+                amountGive: ethers.utils.formatEther(amountGive),
+                timestamp: timestamp.toNumber()
             }
             dispatch(finalizeTx('makeOrder', args));
         });
+        return exchange;
+    }
+}
+
+export const loadOrders = exchange => {
+    return async dispatch => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const block = await provider.getBlockNumber();
+        const orderStream = await exchange.queryFilter('OrderMade', 0, block);
+        const orders = orderStream.map(event => {
+            const { id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp } = event.args;
+            return {
+                id: id.toNumber(),
+                user,
+                tokenGet,
+                amountGet: ethers.utils.formatEther(amountGet),
+                tokenGive,
+                amountGive: ethers.utils.formatEther(amountGive),
+                timestamp: timestamp.toNumber()
+            }
+        });
+        dispatch(setOrders(orders));
     }
 }
 
@@ -112,7 +145,7 @@ export const withdrawToken = (exchange, token, amount) => {
     }
 }
 
-export const makeOrder = (exchange, tokens, amount, price, isBuy) => {
+export const makeOrder = (exchange, tokens, amount, price, isBuy) => { // ensure no duplicate orders
     return async dispatch => {
         dispatch(initiateTx('makeOrder'));
         try {
@@ -128,8 +161,8 @@ export const makeOrder = (exchange, tokens, amount, price, isBuy) => {
             } else {
                 args = [
                     tokens.token_2.address,
-                    parseEther((amount* price).toString()), 
-                    tokens.token_1.address, 
+                    parseEther((amount * price).toString()),
+                    tokens.token_1.address,
                     parseEther(amount)
                 ];
             }
@@ -144,6 +177,6 @@ export const makeOrder = (exchange, tokens, amount, price, isBuy) => {
     }
 }
 
-export const { initiateTx, finalizeTx, failTx } = exchangeSlice.actions;
+export const { setOrders, initiateTx, finalizeTx, failTx } = exchangeSlice.actions;
 
 export default exchangeSlice.reducer;
