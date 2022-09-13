@@ -2,8 +2,7 @@ import { createDraftSafeSelector } from '@reduxjs/toolkit';
 import { DateTime } from 'luxon';
 
 const tokenPair = (_, tokenPair) => tokenPair;
-const orders = state => state.exchange.orders;
-
+const filledOrders = state => state.exchange.filledOrders;
 const openOrders = state => {
     const { orders, cancelledOrders, filledOrders } = state.exchange;
     const openOrders = orders.filter(order => {
@@ -66,6 +65,26 @@ export const sellOrderSelector = createDraftSafeSelector(
                 }
             });
             const processedSellOrders = processOrders(sellOrders, false);
+            return processedSellOrders;
+        }
+    }
+);
+
+export const priceChartSelector = createDraftSafeSelector(
+    filledOrders,
+    tokenPair,
+    (orders, tokenPair) => {
+        if (tokenPair) {
+            const { token_1, token_2 } = tokenPair;
+            const tokenPairOrders = orders.filter(order => {
+                const { tokenGet, tokenGive } = order;
+                const buyCondition = (tokenGet === token_1.address && tokenGive === token_2.address);
+                const sellCondition = (tokenGet === token_2.address && tokenGive === token_1.address);
+                if (buyCondition || sellCondition) {
+                    return true;
+                }
+            });
+            const processedSellOrders = processOrders(tokenPairOrders, false);
             return processedSellOrders;
         }
     }
