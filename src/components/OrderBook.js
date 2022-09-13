@@ -4,7 +4,7 @@ import config from '../config.json';
 import TOKEN_ABI from '../abi/Token.json';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadOrders } from '../redux/exchangeSlice';
-import { orderBookSelector } from '../redux/selectors';
+import { buyOrderSelector, sellOrderSelector } from '../redux/selectors';
 import sort from '../assets/sort.svg';
 
 export default function OrderBook(props) {
@@ -17,7 +17,11 @@ export default function OrderBook(props) {
 
     const { account, chainId } = useSelector(state => state.provider);
     const symbols = useSelector(state => state.tokens.symbols);
-    const orderBook = useSelector(state => orderBookSelector(state, tokenPair));
+    const buyOrders = useSelector(state => buyOrderSelector(state, tokenPair));
+    const sellOrders = useSelector(state => sellOrderSelector(state, tokenPair));
+
+    const cancelledOrders = useSelector(state => state.exchange.cancelledOrders);
+    const filledOrders = useSelector(state => state.exchange.filledOrders);
 
     React.useEffect(() => {
         if (symbols.length) {
@@ -28,6 +32,40 @@ export default function OrderBook(props) {
             dispatch(loadOrders(exchange));
         }
     }, [symbols, account]);
+
+    if (cancelledOrders && filledOrders) {
+        console.log(cancelledOrders, filledOrders)
+    }
+
+    let sellOrderTable, buyOrderTable;
+    if (sellOrders) {
+        sellOrderTable = sellOrders.map((order, i) => {
+            return (
+                <tr key={i}>
+                    <td>{order.amountGive}</td>
+                    <td className={order.orderTypeClass}>
+                        {order.tokenPrice}
+                    </td>
+                    <td>{order.amountGet}</td>
+                </tr>
+            )
+        });
+    }
+
+    if (buyOrders) {
+        buyOrderTable = buyOrders.map((order, i) => {
+            return (
+                <tr key={i}>
+                    <td>{order.amountGet}</td>
+                    <td className={order.orderTypeClass}>
+                        {order.tokenPrice}
+                    </td>
+                    <td>{order.amountGive}</td>
+                </tr>
+            )
+        });
+
+    }
 
     return (
         <div className="component exchange__orderbook">
@@ -56,11 +94,7 @@ export default function OrderBook(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {sellOrderTable}
                     </tbody>
                 </table>
 
@@ -85,11 +119,7 @@ export default function OrderBook(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {buyOrderTable}
                     </tbody>
                 </table>
             </div>

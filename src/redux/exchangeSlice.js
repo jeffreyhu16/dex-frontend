@@ -8,11 +8,19 @@ export const exchangeSlice = createSlice({
     initialState: {
         transaction: {},
         orders: [],
+        cancelledOrders: [],
+        filledOrders: [],
         events: []
     },
     reducers: {
         setOrders: (state, action) => {
             state.orders = action.payload;
+        },
+        setCancelledOrders: (state, action) => {
+            state.cancelledOrders = action.payload;
+        },
+        setFilledOrders: (state, action) => {
+            state.filledOrders = action.payload;
         },
         initiateTx: (state, action) => {
             const txType = action.payload;
@@ -94,6 +102,7 @@ export const loadOrders = exchange => {
     return async dispatch => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const block = await provider.getBlockNumber();
+
         const orderStream = await exchange.queryFilter('OrderMade', 0, block);
         const orders = orderStream.map(event => {
             const { id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp } = event.args;
@@ -108,6 +117,37 @@ export const loadOrders = exchange => {
             }
         });
         dispatch(setOrders(orders));
+
+        const cancelStream = await exchange.queryFilter('OrderCancelled', 0, block);
+        const cancelOrders = cancelStream.map(event => {
+            const { id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp } = event.args;
+            return {
+                id: id.toNumber(),
+                user,
+                tokenGet,
+                amountGet: ethers.utils.formatEther(amountGet),
+                tokenGive,
+                amountGive: ethers.utils.formatEther(amountGive),
+                timestamp: timestamp.toNumber()
+            }
+        });
+        dispatch(setCancelledOrders(cancelOrders));
+
+        const fillStream = await exchange.queryFilter('Trade', 0, block);
+        const fillOrders = fillStream.map(event => {
+            const { id, user, tokenGet, amountGet, tokenGive, amountGive, creator, timestamp } = event.args;
+            return {
+                id: id.toNumber(),
+                user,
+                tokenGet,
+                amountGet: ethers.utils.formatEther(amountGet),
+                tokenGive,
+                amountGive: ethers.utils.formatEther(amountGive),
+                creator,
+                timestamp: timestamp.toNumber()
+            }
+        });
+        dispatch(setFilledOrders(fillOrders));
     }
 }
 
@@ -177,6 +217,6 @@ export const makeOrder = (exchange, tokens, amount, price, isBuy) => { // ensure
     }
 }
 
-export const { setOrders, initiateTx, finalizeTx, failTx } = exchangeSlice.actions;
+export const { setOrders, setCancelledOrders, setFilledOrders, initiateTx, finalizeTx, failTx } = exchangeSlice.actions;
 
 export default exchangeSlice.reducer;
