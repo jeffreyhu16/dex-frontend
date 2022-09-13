@@ -17,6 +17,14 @@
 	padding: 0;
 }
 
+.red {
+	color: var(--clr-red);
+}
+
+.green {
+	color: var(--clr-green);
+}
+
 /* ------------------------------------------------------ */
 
 html {
@@ -182,12 +190,12 @@ small {
 }
 
 .exchange__header--account p {
-    margin: 0 1.5em;
+	margin: 0 1.5em;
 }
 
 .exchange__header--account span {
 	display: inline-block;
-    margin: 0 0.8em;
+	margin: 0 0.8em;
 }
 
 .exchange__header--account a,
@@ -261,7 +269,7 @@ small {
 }
 
 .markets-select-pair {
-    display: flex;
+	display: flex;
 }
 
 /* ------------------------------------------------------ */
@@ -377,7 +385,7 @@ small {
 /* Images */
 
 .icon-network {
-    width: 1.5rem;
+	width: 1.5rem;
 	float: left;
 }
 
