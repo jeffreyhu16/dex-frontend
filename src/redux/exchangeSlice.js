@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import EXCHANGE_ABI from '../abi/Exchange.json';
-import config from '../config.json';
+import config from '../config/chains.json';
 import { ethers } from "ethers";
 
 export const exchangeSlice = createSlice({

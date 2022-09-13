@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { ethers } from "ethers";
 import TOKEN_ABI from '../abi/Token.json';
-import config from '../config.json';
+import config from '../config/chains.json';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';

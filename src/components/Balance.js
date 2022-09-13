@@ -1,7 +1,7 @@
 import React from 'react';
 import { ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
-import config from '../config.json';
+import config from '../config/chains.json';
 import TOKEN_ABI from '../abi/Token.json';
 import EXCHANGE_ABI from '../abi/Exchange.json';
 import logo from '../assets/dapp.svg';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ethers } from 'ethers';
-import config from '../config.json';
+import config from '../config/chains.json';
 import logo from '../assets/logo.png';
 import eth from '../assets/eth.svg';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ethers } from 'ethers';
-import config from '../config.json';
+import config from '../config/chains.json';
 import TOKEN_ABI from '../abi/Token.json';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeOrder } from '../redux/exchangeSlice';
