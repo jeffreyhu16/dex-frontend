@@ -33,10 +33,6 @@ export default function OrderBook(props) {
         }
     }, [symbols, account]);
 
-    if (cancelledOrders && filledOrders) {
-        console.log(cancelledOrders, filledOrders)
-    }
-
     let sellOrderTable, buyOrderTable;
     if (sellOrders) {
         sellOrderTable = sellOrders.map((order, i) => {
