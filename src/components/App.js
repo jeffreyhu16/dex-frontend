@@ -9,7 +9,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { DARK_THEME } from '../mui/dark.theme';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadChainData, loadAccount } from '../redux/providerSlice';
-import { loadExchange } from '../redux/exchangeSlice';
+import { loadExchange, loadOrders } from '../redux/exchangeSlice';
 import PriceChart from './PriceChart';
 
 export default function App() {
@@ -43,6 +43,7 @@ export default function App() {
     React.useEffect(() => {
         if (chainId) {
             const exchange = dispatch(loadExchange(chainId));
+            dispatch(loadOrders(exchange));
             setExchange(exchange);
         }
         if (account) {

@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import config from '../config/chains.json';
 import TOKEN_ABI from '../abi/Token.json';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadOrders } from '../redux/exchangeSlice';
 import { buyOrderSelector, sellOrderSelector } from '../redux/selectors';
 import sort from '../assets/sort.svg';
 
@@ -26,7 +25,6 @@ export default function OrderBook(props) {
             const token_1 = new ethers.Contract(config[chainId][symbols[0]].address, TOKEN_ABI, provider);
             const token_2 = new ethers.Contract(config[chainId][symbols[1]].address, TOKEN_ABI, provider);
             setTokenPair({ token_1, token_2 });
-            dispatch(loadOrders(exchange));
         }
     }, [symbols, account]);
 
