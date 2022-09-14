@@ -1,8 +1,10 @@
 import { createDraftSafeSelector } from '@reduxjs/toolkit';
 import { DateTime } from 'luxon';
+import { groupBy, maxBy, minBy } from 'lodash';
 
 const tokenPair = (_, tokenPair) => tokenPair;
 const filledOrders = state => state.exchange.filledOrders;
+
 const openOrders = state => {
     const { orders, cancelledOrders, filledOrders } = state.exchange;
     const openOrders = orders.filter(order => {
@@ -15,7 +17,7 @@ const openOrders = state => {
     return openOrders;
 }
 
-const processOrders = (orders, isBuy) => {
+const processpOpenOrders = (orders, isBuy) => {
     const processedOrders = orders.map(order => ({
         ...order,
         orderType: isBuy ? 'buy' : 'sell',
@@ -34,6 +36,16 @@ const processOrders = (orders, isBuy) => {
     return processedOrders;
 }
 
+const processFilledOrders = (orders) => {
+    const processedOrders = orders.map(order => ({
+        ...order,
+        tokenPrice: (order.amountGive / order.amountGet).toFixed(2),
+        dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
+    }));
+    processedOrders.sort((a, b) => a.timestamp - b.timestamp);
+    return processedOrders
+}
+
 export const buyOrderSelector = createDraftSafeSelector(
     openOrders,
     tokenPair,
@@ -46,7 +58,7 @@ export const buyOrderSelector = createDraftSafeSelector(
                     return true;
                 }
             });
-            const processedBuyOrders = processOrders(buyOrders, true);
+            const processedBuyOrders = processpOpenOrders(buyOrders, true);
             return processedBuyOrders;
         }
     }
@@ -64,7 +76,7 @@ export const sellOrderSelector = createDraftSafeSelector(
                     return true;
                 }
             });
-            const processedSellOrders = processOrders(sellOrders, false);
+            const processedSellOrders = processpOpenOrders(sellOrders, false);
             return processedSellOrders;
         }
     }
@@ -84,8 +96,36 @@ export const priceChartSelector = createDraftSafeSelector(
                     return true;
                 }
             });
-            const processedSellOrders = processOrders(tokenPairOrders, false);
-            return processedSellOrders;
+            const processedFilledOrders = processFilledOrders(tokenPairOrders);
+            const lastOrder = processedFilledOrders[processedFilledOrders.length - 1];
+            const secondLastOrder = processedFilledOrders[processedFilledOrders.length - 2];
+            const lastPrice = lastOrder.tokenPrice;
+            const secondLastPrice = secondLastOrder.tokenPrice;
+            return {
+                lastPrice,
+                lastPriceChange: (lastPrice > secondLastPrice ? '+' : '-'),
+                series: [{
+                    data: buildGraphData(processedFilledOrders)
+                }]
+            }
         }
     }
 );
+
+const buildGraphData = orders => {
+    const groupedOrders = groupBy(orders, order => DateTime.fromSeconds(order.timestamp).startOf('hour').toISO());
+    const hours = Object.keys(groupedOrders);
+
+    const graphData = hours.map(hour => {
+        const hourGroup = groupedOrders[hour];
+        const open = hourGroup[0];
+        const high = maxBy(hourGroup, 'tokenPrice');
+        const low = minBy(hourGroup, 'tokenPrice');
+        const close = hourGroup[hourGroup.length - 1];
+        return {
+            x: hour,
+            y: [open.tokenPrice, high.tokenPrice, low.tokenPrice, close.tokenPrice]
+        }
+    });
+    return graphData;
+}

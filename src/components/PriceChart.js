@@ -50,7 +50,7 @@ export default function PriceChart() {
                 <ReactApexChart
                     type='candlestick'
                     options={options}
-                    series={series}
+                    series={priceChart ? priceChart.series : []}
                     width='100%'
                     height='100%'
                 /> :
