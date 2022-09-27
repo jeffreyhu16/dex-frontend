@@ -24,7 +24,6 @@ export default function Navbar() {
         const { account, balance } = provider;
         truncatedAcc = account.slice(0, 5) + '...' + account.slice(account.length - 4);
         roundedBalance = Number(balance).toFixed(4);
-        console.log(`${config[chainId].etherscan}/${provider.account}`)
     }
 
     const renderSelect = value => {
