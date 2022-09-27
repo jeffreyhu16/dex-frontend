@@ -38,10 +38,12 @@ export default function PriceChart() {
 
                     <h2>{symbols.length && `${symbols[0]} / ${symbols[1]}`}</h2>
 
-                    <div className='flex'>
-                        <img src={upArrow} alt="Arrow down" />
-                        <span className='up'></span>
-                    </div>
+                    {priceChart &&
+                        <div className='flex'>
+                            <img src={priceChart.lastPriceChange === '+' ? upArrow : downArrow} alt="" />
+                            <span className='up'>{priceChart.lastPrice}</span>
+                        </div>
+                    }
 
                 </div>
             </div>
