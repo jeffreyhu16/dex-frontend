@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import React from 'react';
 import Navbar from './Navbar';
 import Markets from './Markets';
@@ -40,7 +39,7 @@ export default function App() {
         }
     }, []);
 
-    React.useEffect(() => {
+    React.useEffect(() => { // on chainChanged event
         if (chainId) {
             const exchange = dispatch(loadExchange(chainId));
             dispatch(loadOrders(exchange));
