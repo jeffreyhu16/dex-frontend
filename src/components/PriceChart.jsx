@@ -25,7 +25,7 @@ export default function PriceChart() {
             const token_2 = new ethers.Contract(config[chainId][symbols[1]].address, TOKEN_ABI, provider);
             setTokenPair({ token_1, token_2 });
         }
-    }, [symbols, account]);
+    }, [symbols]);
 
     if (priceChart) {
         console.log(priceChart)

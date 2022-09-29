@@ -25,13 +25,13 @@ export default function Order(props) {
     const sellTab = React.useRef(null);
 
     React.useEffect(() => {
-        if (symbols.length && account) {
+        if (symbols.length) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const token_1 = new ethers.Contract(config[chainId][symbols[0]].address, TOKEN_ABI, provider);
             const token_2 = new ethers.Contract(config[chainId][symbols[1]].address, TOKEN_ABI, provider);
             setTokenPair({ token_1, token_2 });
         }
-    }, [symbols, account]);
+    }, [symbols]);
 
     React.useEffect(() => {
         if (events.length) {
@@ -94,8 +94,12 @@ export default function Order(props) {
                     value={price}
                     onChange={e => setPrice(e.target.value)}
                 />
-
-                <button className='button button--filled' type='button' onClick={submitHandler}>
+                {/* switch button disabled when no wallet is connected */}
+                <button 
+                    type='button'
+                    className='button button--filled'
+                    onClick={submitHandler}
+                >
                     <span>{isBuy ? 'Buy' : 'Sell'} NXP</span>
                 </button>
             </form>
