@@ -47,18 +47,13 @@ export default function PriceChart() {
 
                 </div>
             </div>
-
-            {account ?
-                <ReactApexChart
-                    type='candlestick'
-                    options={options}
-                    series={priceChart ? priceChart.series : []}
-                    width='100%'
-                    height='100%'
-                /> :
-                <Banner text='Please connect with MetaMask' />
-            }
-
+            <ReactApexChart
+                type='candlestick'
+                options={options}
+                series={priceChart ? priceChart.series : []}
+                width='100%'
+                height='100%'
+            />
         </div>
     )
 }
