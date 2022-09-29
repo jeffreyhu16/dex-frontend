@@ -37,12 +37,14 @@ const processpOpenOrders = (orders, isBuy) => {
 }
 
 const processFilledOrders = (orders) => {
-    const processedOrders = orders.map(order => ({
-        ...order,
-        tokenPrice: (order.amountGive / order.amountGet).toFixed(2),
-        dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
-    }));
-    processedOrders.sort((a, b) => a.timestamp - b.timestamp);
+    const processedOrders = orders.map((order) => {
+        return {
+            ...order,
+            tokenPrice: (order.amountGive / order.amountGet).toFixed(2),
+            dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
+        }
+    });
+    processedOrders.sort((a, b) => b.timestamp - a.timestamp);
     return processedOrders
 }
 
@@ -78,6 +80,30 @@ export const sellOrderSelector = createDraftSafeSelector(
             });
             const processedSellOrders = processpOpenOrders(sellOrders, false);
             return processedSellOrders;
+        }
+    }
+);
+
+export const filledOrderSelector = createDraftSafeSelector(
+    filledOrders,
+    tokenPair,
+    (orders, tokenPair) => {
+        if (tokenPair) {
+            const { token_1, token_2 } = tokenPair;
+            const tokenPairOrders = [];
+            orders.forEach(order => {
+                const { tokenGet, tokenGive } = order;
+                const buyCondition = (tokenGet === token_1.address && tokenGive === token_2.address);
+                const sellCondition = (tokenGet === token_2.address && tokenGive === token_1.address);
+                if (buyCondition || sellCondition) {
+                    tokenPairOrders.push({
+                        ...order,
+                        tokenPriceClass: buyCondition ? 'green' : 'red'
+                    });
+                }
+            });
+            const processedFilledOrders = processFilledOrders(tokenPairOrders);
+            return processedFilledOrders;
         }
     }
 );

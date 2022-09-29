@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { loadChainData, loadAccount } from '../redux/providerSlice';
 import { loadExchange, loadOrders } from '../redux/exchangeSlice';
 import PriceChart from './PriceChart';
+import Trades from './Trades';
 
 export default function App() {
 
@@ -65,7 +66,7 @@ export default function App() {
                     <section className='exchange__section--right grid'>
                         <PriceChart />
                         {/* Transactions */}
-                        {/* Trades */}
+                        <Trades />
                         <OrderBook exchange={exchange} />
                     </section>
                 </main>
