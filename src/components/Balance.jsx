@@ -144,7 +144,12 @@ export default function Balance(props) {
                         onChange={e => changeHandler(e, 'token_1')}
                     />
 
-                    <button className='button' type='button' onClick={() => submitHandler('token_1')}>
+                    <button
+                        type='button'
+                        disabled={!account}
+                        className='button'
+                        onClick={() => submitHandler('token_1')}
+                    >
                         <span>{isDeposit ? 'Deposit' : 'Withdraw'}</span>
                     </button>
                 </form>
@@ -184,7 +189,12 @@ export default function Balance(props) {
                         onChange={e => changeHandler(e, 'token_2')}
                     />
 
-                    <button className='button' type='button' onClick={() => submitHandler('token_2')}>
+                    <button
+                        type='button'
+                        disabled={!account}
+                        className='button'
+                        onClick={() => submitHandler('token_2')}
+                    >
                         <span>{isDeposit ? 'Deposit' : 'Withdraw'}</span>
                     </button>
                 </form>

@@ -97,6 +97,7 @@ export default function Order(props) {
                 {/* switch button disabled when no wallet is connected */}
                 <button 
                     type='button'
+                    disabled={!account}
                     className='button button--filled'
                     onClick={submitHandler}
                 >
