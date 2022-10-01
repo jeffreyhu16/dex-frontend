@@ -156,14 +156,16 @@ export const myTxSelector = createDraftSafeSelector(
             const { token_1, token_2 } = tokenPair;
             const myTxs = [];
             tx.forEach(tx => {
-                const myTx = tx.user === account || tx.creator === account;
                 const { tokenGet, tokenGive } = tx;
+                const maker = tx.creator === account;
+                const taker = tx.user === account;
                 const buyCondition = (tokenGet === token_1.address && tokenGive === token_2.address);
                 const sellCondition = (tokenGet === token_2.address && tokenGive === token_1.address);
-                if (myTx && (buyCondition || sellCondition)) {
+                if ((maker || taker) && (buyCondition || sellCondition)) {
+                    const condition = maker ? buyCondition : sellCondition;
                     myTxs.push({
                         ...tx,
-                        tokenPriceClass: buyCondition ? 'green' : 'red'
+                        tokenPriceClass: condition ? 'green' : 'red'
                     });
                 }
             });
