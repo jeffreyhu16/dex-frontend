@@ -31,7 +31,7 @@ export default function Trades() {
                 <tr key={i}>
                     <td>{order.dateTime}</td>
                     <td className={order.tokenPriceClass}>
-                        {isBuy ? order.amoutGet : order.amountGive}
+                        {isBuy ? order.amountGet : order.amountGive}
                     </td>
                     <td>{order.tokenPrice}</td>
                 </tr>
