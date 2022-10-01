@@ -27,10 +27,6 @@ export default function PriceChart() {
         }
     }, [symbols]);
 
-    if (priceChart) {
-        console.log(priceChart)
-    }
-
     return (
         <div className="component exchange__chart">
             <div className='component__header flex-between'>

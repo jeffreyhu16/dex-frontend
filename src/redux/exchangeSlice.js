@@ -37,6 +37,9 @@ export const exchangeSlice = createSlice({
                     case 'makeOrder':
                         state.orders = [...state.orders, args];
                         break;
+                    case 'cancelOrder':
+                        state.cancelledOrders = [...state.cancelledOrders, args];
+                        break;
                 }
                 state.transaction = {
                     type: txType,
@@ -93,6 +96,18 @@ export const loadExchange = chainId => {
                 timestamp: timestamp.toNumber()
             }
             dispatch(finalizeTx('makeOrder', args));
+        });
+        exchange.on('OrderCancelled', (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp, event) => {
+            const args = {
+                id: id.toNumber(),
+                user,
+                tokenGet,
+                amountGet: ethers.utils.formatEther(amountGet),
+                tokenGive,
+                amountGive: ethers.utils.formatEther(amountGive),
+                timestamp: timestamp.toNumber()
+            }
+            dispatch(finalizeTx('cancelOrder', args));
         });
         return exchange;
     }
@@ -217,6 +232,28 @@ export const makeOrder = (exchange, tokens, amount, price, isBuy) => { // ensure
     }
 }
 
-export const { setOrders, setCancelledOrders, setFilledOrders, initiateTx, finalizeTx, failTx } = exchangeSlice.actions;
+export const cancelOrder = (exchange, id) => {
+    return async dispatch => {
+        dispatch(initiateTx('cancelOrder'));
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const tx = await exchange.connect(signer).cancelOrder(id);
+            await tx.wait();
+        } catch (err) {     
+            dispatch(failTx('cancelOrder'));
+            console.log(err);
+        }
+    }
+}
+
+export const { 
+    setOrders, 
+    setCancelledOrders, 
+    setFilledOrders, 
+    initiateTx, 
+    finalizeTx, 
+    failTx 
+} = exchangeSlice.actions;
 
 export default exchangeSlice.reducer;

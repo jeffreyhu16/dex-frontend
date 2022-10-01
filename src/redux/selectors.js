@@ -2,6 +2,7 @@ import { createDraftSafeSelector } from '@reduxjs/toolkit';
 import { DateTime } from 'luxon';
 import { groupBy, maxBy, minBy } from 'lodash';
 
+const account = (_, __, account) => account;
 const tokenPair = (_, tokenPair) => tokenPair;
 const filledOrders = state => state.exchange.filledOrders;
 
@@ -45,6 +46,18 @@ const processFilledOrders = (orders) => {
         }
     });
     processedOrders.sort((a, b) => b.timestamp - a.timestamp);
+    return processedOrders
+}
+
+const processMyOrders = (orders) => {
+    const processedOrders = orders.map((order) => {
+        return {
+            ...order,
+            tokenPrice: (order.amountGive / order.amountGet).toFixed(2),
+            dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
+        }
+    });
+    processedOrders.sort((a, b) => a.timestamp - b.timestamp);
     return processedOrders
 }
 
@@ -104,6 +117,58 @@ export const filledOrderSelector = createDraftSafeSelector(
             });
             const processedFilledOrders = processFilledOrders(tokenPairOrders);
             return processedFilledOrders;
+        }
+    }
+);
+
+export const myOpenOrdersSelector = createDraftSafeSelector(
+    openOrders,
+    tokenPair,
+    account,
+    (orders, tokenPair, account) => {
+        if (tokenPair) {
+            const { token_1, token_2 } = tokenPair;
+            const myOrders = [];
+            orders.forEach(order => {
+                const myOrder = order.user === account;
+                const { tokenGet, tokenGive } = order;
+                const buyCondition = (tokenGet === token_1.address && tokenGive === token_2.address);
+                const sellCondition = (tokenGet === token_2.address && tokenGive === token_1.address);
+                if (myOrder && (buyCondition || sellCondition)) {
+                    myOrders.push({
+                        ...order,
+                        tokenPriceClass: buyCondition ? 'green' : 'red'
+                    });
+                }
+            });
+            const processedMyOrders = processMyOrders(myOrders);
+            return processedMyOrders;
+        }
+    }
+);
+
+export const myTxSelector = createDraftSafeSelector(
+    filledOrders,
+    tokenPair,
+    account,
+    (tx, tokenPair, account) => {
+        if (tokenPair) {
+            const { token_1, token_2 } = tokenPair;
+            const myTxs = [];
+            tx.forEach(tx => {
+                const myTx = tx.user === account || tx.creator === account;
+                const { tokenGet, tokenGive } = tx;
+                const buyCondition = (tokenGet === token_1.address && tokenGive === token_2.address);
+                const sellCondition = (tokenGet === token_2.address && tokenGive === token_1.address);
+                if (myTx && (buyCondition || sellCondition)) {
+                    myTxs.push({
+                        ...tx,
+                        tokenPriceClass: buyCondition ? 'green' : 'red'
+                    });
+                }
+            });
+            const processedmyTxs = processMyOrders(myTxs);
+            return processedmyTxs;
         }
     }
 );
