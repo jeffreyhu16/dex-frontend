@@ -4,6 +4,7 @@ import config from '../config/chains.json';
 import TOKEN_ABI from '../abi/Token.json';
 import { useDispatch, useSelector } from 'react-redux';
 import { buyOrderSelector, sellOrderSelector } from '../redux/selectors';
+import { fillOrder } from '../redux/exchangeSlice';
 import sort from '../assets/sort.svg';
 
 export default function OrderBook(props) {
@@ -28,11 +29,15 @@ export default function OrderBook(props) {
         }
     }, [symbols]);
 
+    const clickHandler = id => {
+        dispatch(fillOrder(exchange, id));
+    }
+
     let sellOrderTable, buyOrderTable;
     if (sellOrders) {
         sellOrderTable = sellOrders.map((order, i) => {
             return (
-                <tr key={i}>
+                <tr key={i} onClick={() => clickHandler(order.id)}>
                     <td>{order.amountGive}</td>
                     <td className={order.orderTypeClass}>
                         {order.tokenPrice}
@@ -46,7 +51,7 @@ export default function OrderBook(props) {
     if (buyOrders) {
         buyOrderTable = buyOrders.map((order, i) => {
             return (
-                <tr key={i}>
+                <tr key={i} onClick={() => clickHandler(order.id)}>
                     <td>{order.amountGet}</td>
                     <td className={order.orderTypeClass}>
                         {order.tokenPrice}
