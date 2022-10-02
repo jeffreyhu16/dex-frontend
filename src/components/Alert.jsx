@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { myEventSelector } from '../redux/selectors';
+import config from '../config/chains.json';
 
 export default function Alert() {
 
-    const { account } = useSelector(state => state.provider);
+    const { chainId, account } = useSelector(state => state.provider);
     const { isPending, isSuccessful, isError } = useSelector(state => state.exchange.transaction);
     const myEvent = useSelector(state => myEventSelector(state, account));
 
@@ -20,8 +21,11 @@ export default function Alert() {
         }
     }, [isPending, isSuccessful, isError]);
 
-    const truncateHash = hash => {
-        return hash.slice(0, 6) + '...' + hash.slice(hash.length - 5);
+    let txLink, truncatedHash;
+    if (myEvent) {
+        const { txHash } = myEvent;
+        txLink = config[chainId].etherscan + '/tx/' + txHash;
+        truncatedHash = txHash.slice(0, 6) + '...' + txHash.slice(txHash.length - 5);
     }
 
     return (
@@ -31,8 +35,8 @@ export default function Alert() {
                 {isSuccessful &&
                     <>
                         <h1>Transaction Successful</h1>
-                        <a href='' target='_blank' rel='noreferrer'>
-                            {myEvent && truncateHash(myEvent.txHash)}
+                        <a href={txLink} target='_blank' rel='noreferrer'>
+                            {truncatedHash}
                         </a>
                     </>
                 }

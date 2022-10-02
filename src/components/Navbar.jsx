@@ -93,7 +93,7 @@ export default function Navbar() {
                 {
                     provider.account ?
                         <a
-                            href={config[chainId] ? `${config[chainId].etherscan}/${provider.account}`: '#'}
+                            href={config[chainId] ? `${config[chainId].etherscan}/address/${provider.account}`: '#'}
                             target='_blank'
                         >
                             {truncatedAcc}

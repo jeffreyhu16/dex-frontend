@@ -12,7 +12,7 @@
         "exchange": {
             "address": "0x1f494c3518276da5497cE4b56102337d7575181a"
         },
-        "etherscan": "https://goerli.etherscan.io/address"
+        "etherscan": "https://goerli.etherscan.io"
     },
     "31337": {
         "NXP": {
