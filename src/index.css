@@ -628,8 +628,9 @@ table td {
 
 	text-align: center;
 
-	cursor: pointer;
-
+	border-radius: 10px;
+	box-shadow: 0 0 1rem 0 #000;
+	
 	transition: all 500ms ease;
 }
 

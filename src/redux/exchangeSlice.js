@@ -27,7 +27,8 @@ export const exchangeSlice = createSlice({
             state.transaction = {
                 type: txType,
                 isPending: true,
-                isSuccessful: false
+                isSuccessful: false,
+                isError: false
             }
         },
         finalizeTx: {
@@ -42,15 +43,18 @@ export const exchangeSlice = createSlice({
                         break;
                     case 'fillOrder':
                         state.filledOrders = [...state.filledOrders, args];
-                        console.log('updated filledOrders state...')
                         break;
                 }
+                // console.log('finalizing tx...')
+                // console.log(txType)
+                // console.log(args)
                 state.transaction = {
                     type: txType,
                     isPending: false,
-                    isSuccessful: true
+                    isSuccessful: true,
+                    isError: false
                 }
-                state.events = [...state.events, { type: txType, args }];
+                state.events = [{ type: txType, ...args }, ...state.events];
             },
             prepare: (txType, args) => ({
                 payload: { txType, args }
@@ -61,7 +65,8 @@ export const exchangeSlice = createSlice({
             state.transaction = {
                 type: txType,
                 isPending: false,
-                isSuccessful: false
+                isSuccessful: false,
+                isError: true
             }
         }
     },
@@ -71,25 +76,28 @@ export const loadExchange = chainId => {
     return dispatch => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const exchange = new ethers.Contract(config[chainId].exchange.address, EXCHANGE_ABI, provider);
-        exchange.on('Deposit', (token, user, amount, balance) => { // ensure no duplicate events
+        exchange.on('Deposit', (token, user, amount, balance, event) => { // ensure no duplicate events
+            console.log(event)
             const args = {
                 token,
                 user,
                 amount: ethers.utils.formatEther(amount),
-                balance: ethers.utils.formatEther(balance)
+                balance: ethers.utils.formatEther(balance),
+                txHash: event.transactionHash
             }
             dispatch(finalizeTx('Deposit', args));
         });
-        exchange.on('Withdraw', (token, user, amount, balance) => {
+        exchange.on('Withdraw', (token, user, amount, balance, event) => {
             const args = {
                 token,
                 user,
                 amount: ethers.utils.formatEther(amount),
-                balance: ethers.utils.formatEther(balance)
+                balance: ethers.utils.formatEther(balance),
+                txHash: event.transactionHash
             }
             dispatch(finalizeTx('Withdraw', args));
         });
-        exchange.on('OrderMade', (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
+        exchange.on('OrderMade', (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp, event) => {
             const args = {
                 id: id.toNumber(),
                 user,
@@ -97,11 +105,12 @@ export const loadExchange = chainId => {
                 amountGet: ethers.utils.formatEther(amountGet),
                 tokenGive,
                 amountGive: ethers.utils.formatEther(amountGive),
-                timestamp: timestamp.toNumber()
+                timestamp: timestamp.toNumber(),
+                txHash: event.transactionHash
             }
             dispatch(finalizeTx('makeOrder', args));
         });
-        exchange.on('OrderCancelled', (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp) => {
+        exchange.on('OrderCancelled', (id, user, tokenGet, amountGet, tokenGive, amountGive, timestamp, event) => {
             const args = {
                 id: id.toNumber(),
                 user,
@@ -109,11 +118,12 @@ export const loadExchange = chainId => {
                 amountGet: ethers.utils.formatEther(amountGet),
                 tokenGive,
                 amountGive: ethers.utils.formatEther(amountGive),
-                timestamp: timestamp.toNumber()
+                timestamp: timestamp.toNumber(),
+                txHash: event.transactionHash
             }
             dispatch(finalizeTx('cancelOrder', args));
         });
-        exchange.on('Trade', (id, user, tokenGet, amountGet, tokenGive, amountGive, creator, timestamp) => {
+        exchange.on('Trade', (id, user, tokenGet, amountGet, tokenGive, amountGive, creator, timestamp, event) => {
             const args = {
                 id: id.toNumber(),
                 user,
@@ -122,7 +132,8 @@ export const loadExchange = chainId => {
                 tokenGive,
                 amountGive: ethers.utils.formatEther(amountGive),
                 creator,
-                timestamp: timestamp.toNumber()
+                timestamp: timestamp.toNumber(),
+                txHash: event.transactionHash
             }
             dispatch(finalizeTx('fillOrder', args));
         });

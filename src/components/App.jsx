@@ -12,6 +12,7 @@ import { loadExchange, loadOrders } from '../redux/exchangeSlice';
 import PriceChart from './PriceChart';
 import Trades from './Trades';
 import Transactions from './Transactions';
+import Alert from './Alert';
 
 export default function App() {
 
@@ -71,7 +72,7 @@ export default function App() {
                         <OrderBook exchange={exchange} />
                     </section>
                 </main>
-                {/* Alert */}
+                <Alert />
             </div>
         </ThemeProvider>
     )

@@ -175,11 +175,23 @@ export const myTxSelector = createDraftSafeSelector(
     }
 );
 
+export const myEventSelector = createDraftSafeSelector(
+    state => state.exchange.events,
+    (_, account) => account,
+    (events, account) => {
+        if (account) {
+            const myEvents = events.filter(event => event.user === account);
+            console.log(myEvents)
+            return myEvents[0];
+        }
+    }
+);
+
 export const priceChartSelector = createDraftSafeSelector(
     filledOrders,
     tokenPair,
     (orders, tokenPair) => {
-        if (tokenPair) {
+        if (orders.length && tokenPair) {
             const { token_1, token_2 } = tokenPair;
             const tokenPairOrders = orders.filter(order => {
                 const { tokenGet, tokenGive } = order;
