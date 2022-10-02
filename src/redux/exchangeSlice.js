@@ -45,9 +45,6 @@ export const exchangeSlice = createSlice({
                         state.filledOrders = [...state.filledOrders, args];
                         break;
                 }
-                // console.log('finalizing tx...')
-                // console.log(txType)
-                // console.log(args)
                 state.transaction = {
                     type: txType,
                     isPending: false,
@@ -77,7 +74,6 @@ export const loadExchange = chainId => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const exchange = new ethers.Contract(config[chainId].exchange.address, EXCHANGE_ABI, provider);
         exchange.on('Deposit', (token, user, amount, balance, event) => { // ensure no duplicate events
-            console.log(event)
             const args = {
                 token,
                 user,

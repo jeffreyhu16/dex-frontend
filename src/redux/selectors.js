@@ -181,7 +181,6 @@ export const myEventSelector = createDraftSafeSelector(
     (events, account) => {
         if (account) {
             const myEvents = events.filter(event => event.user === account);
-            console.log(myEvents)
             return myEvents[0];
         }
     }
