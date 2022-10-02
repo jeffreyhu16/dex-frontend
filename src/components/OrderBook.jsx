@@ -30,7 +30,9 @@ export default function OrderBook(props) {
     }, [symbols]);
 
     const clickHandler = id => {
-        dispatch(fillOrder(exchange, id));
+        if (account) {
+            dispatch(fillOrder(exchange, id));
+        }
     }
 
     let sellOrderTable, buyOrderTable;
