@@ -19,14 +19,17 @@ const openOrders = state => {
 }
 
 const processpOpenOrders = (orders, isBuy) => {
-    const processedOrders = orders.map(order => ({
-        ...order,
-        orderType: isBuy ? 'buy' : 'sell',
-        orderTypeClass: isBuy ? 'green' : 'red',
-        orderFillAction: isBuy ? 'sell' : 'buy',
-        tokenPrice: (order.amountGive / order.amountGet).toFixed(2),
-        dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
-    }));
+    const processedOrders = orders.map(order => {
+        const tokenPrice = isBuy ? (order.amountGive / order.amountGet) : (order.amountGet / order.amountGive);
+        return {
+            ...order,
+            orderType: isBuy ? 'buy' : 'sell',
+            orderTypeClass: isBuy ? 'green' : 'red',
+            orderFillAction: isBuy ? 'sell' : 'buy',
+            tokenPrice: tokenPrice.toFixed(2),
+            dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
+        }
+    });
     processedOrders.sort((a, b) => {
         if (isBuy) {
             return a.tokenPrice - b.tokenPrice;
@@ -39,9 +42,13 @@ const processpOpenOrders = (orders, isBuy) => {
 
 const processFilledOrders = (orders) => {
     const processedOrders = orders.map((order) => {
+        const tokenPrice =
+            order.tokenPriceClass === 'green' ?
+                (order.amountGive / order.amountGet) :
+                (order.amountGet / order.amountGive);
         return {
             ...order,
-            tokenPrice: (order.amountGive / order.amountGet).toFixed(2),
+            tokenPrice: tokenPrice.toFixed(2),
             dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
         }
     });
@@ -51,9 +58,33 @@ const processFilledOrders = (orders) => {
 
 const processMyOrders = (orders) => {
     const processedOrders = orders.map((order) => {
+        const tokenPrice =
+            order.tokenPriceClass === 'green' ?
+                (order.amountGive / order.amountGet) :
+                (order.amountGet / order.amountGive);
         return {
             ...order,
-            tokenPrice: (order.amountGive / order.amountGet).toFixed(2),
+            tokenPrice: tokenPrice.toFixed(2),
+            dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
+        }
+    });
+    processedOrders.sort((a, b) => a.timestamp - b.timestamp);
+    return processedOrders
+}
+
+const processMyTxs = (orders) => {
+    const processedOrders = orders.map((order) => {
+        const priceCondition =
+            order.isMaker ?
+                order.tokenPriceClass === 'green' :
+                order.tokenPriceClass === 'red';
+        const tokenPrice =
+            priceCondition ?
+                (order.amountGive / order.amountGet) :
+                (order.amountGet / order.amountGive);
+        return {
+            ...order,
+            tokenPrice: tokenPrice.toFixed(2),
             dateTime: DateTime.fromSeconds(order.timestamp).toLocaleString(DateTime.DATETIME_SHORT)
         }
     });
@@ -135,6 +166,7 @@ export const myOpenOrdersSelector = createDraftSafeSelector(
                 const buyCondition = (tokenGet === token_1.address && tokenGive === token_2.address);
                 const sellCondition = (tokenGet === token_2.address && tokenGive === token_1.address);
                 if (myOrder && (buyCondition || sellCondition)) {
+                    console.log(buyCondition)
                     myOrders.push({
                         ...order,
                         tokenPriceClass: buyCondition ? 'green' : 'red'
@@ -165,12 +197,13 @@ export const myTxSelector = createDraftSafeSelector(
                     const condition = maker ? buyCondition : sellCondition;
                     myTxs.push({
                         ...tx,
+                        isMaker: maker,
                         tokenPriceClass: condition ? 'green' : 'red'
                     });
                 }
             });
-            const processedmyTxs = processMyOrders(myTxs);
-            return processedmyTxs;
+            const processedMyTxs = processMyTxs(myTxs);
+            return processedMyTxs;
         }
     }
 );

@@ -81,10 +81,7 @@ export default function OrderBook(props) {
                                 {symbols.length && symbols[0]}
                                 <img src={sort} alt='' />
                             </th>
-                            <th>
-                                {symbols.length && `${symbols[0]}/${symbols[1]}`}
-                                <img src={sort} alt='' />
-                            </th>
+                            <th>Price<img src={sort} alt='' /></th>
                             <th>
                                 {symbols.length && symbols[1]}
                                 <img src={sort} alt='' />
@@ -106,10 +103,7 @@ export default function OrderBook(props) {
                                 {symbols.length && symbols[0]}
                                 <img src={sort} alt='' />
                             </th>
-                            <th>
-                                {symbols.length && `${symbols[0]}/${symbols[1]}`}
-                                <img src={sort} alt='' />
-                            </th>
+                            <th>Price<img src={sort} alt='' /></th>
                             <th>
                                 {symbols.length && symbols[1]}
                                 <img src={sort} alt='' />
