@@ -277,7 +277,7 @@ small {
 
 .exchange__transfers img {
 	float: left;
-	margin: 0 0.4em 0 0;
+	margin: 0.1em 0.4em 0.2em 0;
 }
 
 .exchange__transfers small {
@@ -291,6 +291,35 @@ small {
 
 .exchange__transfers--form .flex-between {
 	padding: 0 3em 0.75em 0;
+}
+
+/* ------------------------------------------------------ */
+/* SWAP COMPONENT */
+
+.swap-container {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	padding-bottom: 0.75em;
+}
+
+.swap-token-1 {
+	display: flex;
+	align-items: center;
+}
+
+.swap-token-2 {
+	display: flex;
+	align-items: center;
+	width: 4rem;
+}
+
+.img-swap {
+	position: absolute;
+	left: 50%;
+	bottom: 0.5em;
+	transform: translateX(-50%);
 }
 
 /* ------------------------------------------------------ */
@@ -630,7 +659,7 @@ table td {
 
 	border-radius: 10px;
 	box-shadow: 0 0 1rem 0 #000;
-	
+
 	transition: all 500ms ease;
 }
 

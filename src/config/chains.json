@@ -12,6 +12,9 @@
         "exchange": {
             "address": "0x1f494c3518276da5497cE4b56102337d7575181a"
         },
+        "ETH_PriceFeed": {
+            "address": "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e"
+        },
         "etherscan": "https://goerli.etherscan.io"
     },
     "31337": {

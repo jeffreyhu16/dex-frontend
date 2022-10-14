@@ -13,6 +13,7 @@ import PriceChart from './PriceChart';
 import Trades from './Trades';
 import Transactions from './Transactions';
 import Alert from './Alert';
+import Swap from './Swap';
 
 export default function App() {
 
@@ -21,6 +22,7 @@ export default function App() {
     const { account, chainId } = useSelector(state => state.provider);
 
     const [exchange, setExchange] = React.useState();
+    const [isSwap, setIsSwap] = React.useState(true);
 
     React.useEffect(() => {
         try {
@@ -61,8 +63,12 @@ export default function App() {
                 <Navbar />
                 <main className='exchange grid'>
                     <section className='exchange__section--left grid'>
-                        <Markets />
-                        <Balance exchange={exchange} />
+                        <Markets setIsSwap={setIsSwap} />
+                        {isSwap ?
+                            <Swap exchange={exchange} />
+                            :
+                            <Balance exchange={exchange} />
+                        }
                         <Order exchange={exchange} />
                     </section>
                     <section className='exchange__section--right grid'>
